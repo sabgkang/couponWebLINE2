@@ -428,7 +428,7 @@ function 切換優惠券()
 
 
 function 使用(要使用的優惠券) {
-  console.log("使用優惠券", 要使用優惠券);
+  console.log("使用優惠券", 要使用的優惠券);
   
   var selectedCouponId = 要使用的優惠券.split(":"); 
   
