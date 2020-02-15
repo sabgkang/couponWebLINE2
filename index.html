@@ -1,0 +1,292 @@
+<!--https://demos.telerik.com/kendo-ui/content/shared/js/mobile-examples.js-->
+<!--?displayName=小華&userId=U722be0c9c9d36e011c0e556bd2047819&pictureUrl=www.google.com-->
+    
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title></title>
+  <meta name="msapplication-tap-highlight" content="no" />
+
+  <!--  using Noto Sans TC is added by Paul Kang-->
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap" rel="stylesheet">
+
+  <link href="https://kendo.cdn.telerik.com/2020.1.114/styles/kendo.common-nova.min.css" rel="stylesheet" />
+  <link href="https://kendo.cdn.telerik.com/2020.1.114/styles/kendo.nova.min.css" rel="stylesheet" />
+  <link href="https://kendo.cdn.telerik.com/2020.1.114/styles/kendo.mobile.nova.min.css" rel="stylesheet" />   
+
+  <link href="css/couponStyle.css" rel="stylesheet" />
+     
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+  <script src="https://kendo.cdn.telerik.com/2020.1.114/js/kendo.all.min.js"></script>
+  <script src="https://kendo.cdn.telerik.com/2020.1.114/js/kendo.timezones.min.js"></script>
+  
+  <link rel="stylesheet" href="css/loading.css" />
+  <script src="js/loading.js"></script>    
+</head>
+
+<body id="body">
+  <!-- Google Tag Manager -->
+  <!-- remarked by Paul Kang
+    <noscript>
+      <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-6X92" height="0" width="0" style="display: none; visibility: hidden"></iframe>
+    </noscript>
+    <script>(function(w, d, s, l, i) { w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' }); var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f); })(window, document, 'script', 'dataLayer', 'GTM-6X92');</script>
+  -->
+  <!-- End Google Tag Manager -->
+
+  <!-- 
+    若設  data-use-native-scrolling="true"，則 非 mobile mode 可以捲動，但 mobile mode 顯示有問題。
+    若沒設 data-use-native-scrolling="true"，則 非 mobile mode 無法捲動，但 mobile mode 正常可捲動。
+    -->
+
+  <style>
+    .km-on-ios .km-header .km-navbar
+    {
+      background-color: coralbl;
+      /* deeppink; */
+      font-size: 18px;
+    }
+
+    .km-on-ios .km-header .km-widget,
+    .km-on-ios .km-header .km-view-title {
+      color: white;
+    }
+
+    .NotoSansFont {
+      font-family: 'Noto Sans TC'; 
+    }
+    
+    .使用優惠券title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-left: 15px;
+
+    }
+
+    .優惠券名稱 {
+      font-size: 18px;
+      margin-left: 15px;
+
+    }
+    
+    #calendar,
+    #calendar .k-calendar-view,
+    #calendar .k-content {
+        width: 100%;
+    }    
+  </style>
+
+  <div id="errorMessage" style="display: none; margin-top: 2em; color: red; font-weight: bold" align="center">
+    <h3 class="NotoSansFont" style="margin-top: 2em; color: red; font-weight: bold">輸入參數發生錯誤，請洽管理員</h3>
+  </div>
+    
+  <div data-role="view" data-title="我的優惠券" style="font-family: 'Noto Sans TC'" id="couponDiv" data-layout="" data-show="nullForNow" data-init="initSearch">
+    <header data-role="header">
+      <div data-role="navbar" id="normal" class="km-accent">
+
+        <a data-align="right" data-role="button" href="#forms" data-rel="" data-icon="contacts"></a>
+        
+        <span data-role="view-title"></span>
+        <span class="km-view-subtitle"></span>
+        <a data-align="left" data-role="button" data-click="showSearch" data-click-on="down" data-icon="search"></a>
+      </div>
+      <div data-role="navbar" id="search" class="navbar-hidden">
+        <div data-align="right" id="demos-search-container" data-align="right">
+          <input type="search" id="demos-search" />
+        </div>
+      </div>
+    </header>
+
+    <ul data-role="listview" data-type="group" style="margin-top: -25px" >
+      <li >
+        <ul>
+          <li style="padding: 0px; margin-top: -10px" >
+            <ul data-role="buttongroup" data-index="0" data-select="切換優惠券">
+              <li style="padding:10px" >可使用優惠券</li>
+              <li>已使用優惠券</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+       
+    <div id="可使用優惠券Div">       
+      <div style="height: 15px"></div>
+      <span class="使用優惠券title">可使用優惠券</span>
+      <div style="height: 15px"></div>
+
+      <ul data-role="listview" data-source="couponDataSource" data-pull-to-refresh="true" data-template="nav-template" data-header-template="header-template" class="main-menu">
+
+        <script type="text/x-kendo-template" id="header-template">
+          <span class="km-icon km-#: value #"></span> #: value #
+        </script>
+
+        <script type="text/x-kendo-template" id="nav-template">
+          <a href="#: url #" class="優惠券名稱">#: 優惠券名稱 # <br>
+            <span style="font-size:16px; color: gray; margin-right:20px" >優惠券使用期限: #: 優惠券時間 #</span>
+          </a>
+        </script>
+
+      </ul>
+    </div>
+
+     <div id="已使用優惠券Div">
+      <div style="height: 15px"></div>
+      <span class="使用優惠券title">已使用優惠券</span>
+      <div style="height: 15px"></div>
+
+      <ul data-role="listview" data-source="couponHistorySource" data-pull-to-refresh="false" data-template="nav-template" data-header-template="header-template" class="main-menu">
+
+        <script type="text/x-kendo-template" id="header-template">
+          <span class="km-icon km-#: value #"></span> #: value #
+        </script>
+
+        <script type="text/x-kendo-template" id="nav-template">
+          <span style="font-size:20px; color: red; float:right" id="優惠券狀態">#: 狀態 #</span>         
+          <span style="font-size:18px; margin:0px;" class="優惠券名稱">#: 優惠券名稱 # <br>
+            <span style="font-size:16px; color: gray;" >優惠券使用期限: #: 優惠券時間 #</span>           
+          </span>
+        </script>
+
+      </ul>
+    </div>        
+    
+    <h2 style="display: none" id="deleteMe"></h2>
+
+  </div>
+  
+  <div id="forms" data-role="view" data-title="個人資料" data-init="initForm" data-use-native-scrolling="true" style="font-family: 'Noto Sans TC'">
+<!--
+    <header data-role="header">
+      <div data-role="navbar" id="normal" class="km-accent">
+        <span data-role="view-title"></span>
+      </div>
+    </header>
+-->
+    <img id="LINE頭像" src="" class="km-thumbnail" style="width: 10em; height: 10em; margin: 1em auto; display: block; float: none;"/>
+       
+<!--    <div style="margin: 1em;" >* 表示必填欄位</div>-->
+    <ul data-role="listview" data-style="inset">
+      <li>
+        <label class="km-label-above">姓名
+            <input id="formUserName" type="text" class="NotoSansFont"/>
+        </label>
+      </li>
+      <li>
+        <label class="km-label-above">性別(必填，Inbody 量測需要)
+          <select id="formUserGender"  name="option" class="NotoSansFont">
+            <option value="男">男</option>
+            <option value="女">女</option>
+          </select>
+        </label>
+      </li>
+      <li>
+        <label class="km-label-above">生日(必填，Inbody 量測需要)
+          <input id="formUserBirth" class="NotoSansFont" type="text"/> 
+        </label> 
+      </li>      
+      <li>
+        <label class="km-label-above">身高(必填，Inbody 量測需要)
+          <input id="formUserHeight" class="NotoSansFont" type="text" placeholder="例如: 180"/> 
+        </label> 
+        <span style="float:left ;margin-bottom: -1em; margin-top: -10px; margin-left: 5em">cm</span>
+      </li> 
+      <li>
+        <label class="km-label-above">體重(必填，Inbody 量測需要)
+          <input id="formUserWeight" class="NotoSansFont" type="text" placeholder="例如: 50"/> 
+        </label> 
+        <span style="float:left ;margin-bottom: -1em; margin-top: -10px; margin-left: 5em">kg</span>
+      </li>
+      <li>
+        <label class="km-label-above">電話(必填，聯絡使用)
+          <input id="formUserPhone" class="NotoSansFont" type="text"/> 
+        </label> 
+      </li>
+      <li>
+        <label class="km-label-above">身分證號(必填，作為會員身份辨識，不用做其他用途)
+          <input id="formUserID" class="NotoSansFont" type="text"/> 
+        </label> 
+      </li>
+      <li>
+        <label class="km-label-above">緊急連絡人(必填，緊急聯絡使用)
+          <input id="formEmergencyContact" class="NotoSansFont" type="text"/> 
+        </label> 
+      </li>
+      <li>
+        <label class="km-label-above">緊急連絡電話(必填，緊急聯絡使用)
+          <input id="formEmergencyPhone" class="NotoSansFont" type="text"/> 
+        </label> 
+      </li>
+      <li>
+        <label class="km-label-above">地址(建議填寫，聯絡使用)
+          <input id="formUserAddr" class="NotoSansFont" type="text"/> 
+        </label> 
+      </li>                                                     
+    </ul>
+    <div align="center">
+      <a data-role="button" class="km-primary" style="color: white; margin:1em; padding-left:3em; padding-right:3em" onclick="更新資料()" >更新資料</a>
+    </div>
+    
+  </div>  
+
+  <div data-id="couponDiv" data-role="layout" data-show="showDemoLayout" data-hide="removeView">
+    <header data-role="header">
+      <div data-role="navbar" class="km-accent">
+        <a data-align="left" data-icon="arrow-w" href="#/" data-role="backbutton" data-transition="slide reverse"></a>
+        <span data-role="view-title"></span>
+        <!--        <a data-align="right" id="source-code-button" data-icon="source-code" data-click="goToSourceCode" data-role="button" title="Show this demo source code">Source Code</a>-->
+      </div>
+    </header>
+  </div>
+
+<!--  <script src="js/example-datasources.js"></script>-->
+  <script src="3-controllers/functions.js"></script>
+  <script src="1-models/data-process.js"></script>
+  <script src="js/prettify.js"></script> 
+  
+  <script>
+    // 中光電竹南廠
+    //var 場所位置緯度=  24.7118; 
+    //var 場所位置經度= 120.9162;
+    
+    //北大運動場
+    var 場所位置緯度=  24.940216;
+    var 場所位置經度= 121.365881;
+
+    var 目前位置緯度;
+    var 目前位置經度;
+          
+    var paramToSend = "";
+    var inputParamString = location.search;
+    var inputParam = inputParamString.split("&");
+    var displayName, userId, pictureUrl;
+    var inputError = false;
+    var useLocalAPIs = false;
+    
+    //var memberData = [];
+    //var dataToAdd = [];    
+    var couponData=[];
+    var couponHistory=[];
+    var couponMember=[];    
+    var userPhoneNumber;
+    var allDataReady=0;
+    var reloadcouponNeeded = false;
+    var 要使用的優惠券;
+    var 要核銷的優惠券;
+    var 已經是會員=false;
+      
+    notInCoupon=[];
+    inCoupon=[];
+    myHistory=[];      
+    
+    loadcoupons = false; //declared in data-process.js
+    $("#已使用優惠券Div").hide();
+    
+    // checkInputParam() 和 checkUserIdExist() 都是在 functions.js 定義
+    if (checkInputParam()) checkUserIdExist();
+        
+  </script>
+</body>
+
+</html>

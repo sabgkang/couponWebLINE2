@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <title></title>
+      <link rel="stylesheet" href="styles/kendo.common.min.css" />
+      <link rel="stylesheet" href="styles/kendo.default.min.css" />
+      <link rel="stylesheet" href="styles/kendo.mobile.all.min.css" />
+
+      <script src="js/jquery.min.js"></script>
+      <script src="js/kendo.all.min.js"></script>    
+  </head>
+  
+  <body>
+    <div data-role="view" data-title="優惠券細節" id="actionsheet-view" data-use-native-scrolling="true" style="font-family:  'Noto Sans TC' " data-show="dataAlreadyShown">
+        <!--<h3 id="actionResult">TEST</h3>-->
+        <ul data-role="listview" data-source="couponDetail" data-template="couponItemTemplate" class="couponList"></ul>
+        <div style="margin-left:20px; margin-right:20px">
+          <hr>
+          <h3 style="display: none" id="與運動中心距離">與運動中心距離: </h3>
+          <h3 style="display: none" id="優惠券開始時間">優惠券開始時間: </h3>
+        </div>
+    </div>
+
+
+    <script type="script/x-kendo-template" id="couponItemTemplate">
+        <p class="reply km-primary km-button-right"
+        style="color: white" 
+        data-role="button"
+        onclick="使用(#:ID#)"  
+        id = "使用按鈕#:ID#"
+        ></p>
+
+        <h4>優惠券編號: #: 優惠券編號 #</h4>
+        <h4>優惠券名稱: #: 優惠券名稱 #</h4>
+        <h4>優惠券期限: #: 優惠券時間 #</h4>     
+        <h4>其他說明:  #: 其他說明 #</h4>
+        <img id="優惠券圖片" src=#: picUrl # alt="" width="100%" style="margin-right:20px">
+    </script>
+
+    <script>
+        //onclick="使用(#:ID#)"       
+      
+      var hrefString = window.location.href;
+      var inputParamString = hrefString.split("?");
+      var inputParam = inputParamString[2].split("&")
+      var couponId = inputParamString[inputParamString.length-1].split("=")[1];
+
+      //var couponNum = parseInt(couponId.substring(1,5));
+      console.log(couponId);
+      var idNum = 0;
+      var couponDetail=[];  
+
+      updatecouponDetail();
+
+      //檢查位置
+      var distance = calcDistance(目前位置經度, 目前位置緯度, 場所位置經度, 場所位置緯度);
+      console.log("aaa",distance);
+
+      //檢查日期時間
+      var couponDateArr;
+      var couponTimeStart, couponTimeEnd;
+      
+      function updatecouponDetail(){    
+        couponData.forEach(function(coupon, ind, arr){
+          if (coupon[0]==couponId) {
+            idNum++;
+            //console.log(coupon, ind);
+            var couponDetailItem = {
+              "ID": idNum,
+              "優惠券編號": coupon[0],
+              "優惠券名稱": coupon[1],         
+              "優惠券時間": coupon[2],  
+              "其他說明": coupon[3],  
+              "picUrl": coupon[4],
+            };
+            couponDetail.push(couponDetailItem);
+            
+//            couponDateArr = coupon[3].split(" ");
+//            couponTimeStart = couponDateArr[1].substring(0,5);
+//            couponTimeEnd = couponDateArr[1].substring(couponDateArr[1].length-5,couponDateArr[1].length);            
+//            console.log(couponDateArr, couponTimeStart, couponTimeEnd);
+          }
+        });
+      }
+      
+      function 使用(index) {
+        console.log("使用優惠券");
+        
+        // call API:40 =========================================================================
+        paramToSend = "?API=40&"+"UserName="+userName+"&CouponId="+couponId+"&UserId="+userId[1]+"&PhoneNumber="+userPhoneNumber;
+        console.log(paramToSend);
+        var request = new XMLHttpRequest()
+        request.open('GET', 'https://api-linko-sports-center.herokuapp.com/'+paramToSend, true);
+      
+        request.onload = function() {
+          app.navigate('#:back');          
+//          alert(this.response+", 請洽櫃台或相關人員"); 
+          alert("請洽櫃台或相關人員享用優惠");           
+          setTimeout( function() {location.reload();}, 0);
+          
+        }
+        // Send request
+        request.send();  
+        
+      }
+
+      function 簽到() {
+        console.log("簽到: ", userName, couponId, userId[1], userPhoneNumber);
+        
+        // 考慮使用 library https://js-joda.github.io/js-joda/manual/usage.html
+        //檢查時間
+        var 現在日期及時間 = new Date();
+        var 今天日期 = 現在日期及時間.toLocaleDateString();
+        var 現在時間 = 現在日期及時間.toLocaleTimeString();
+        今天日期 = 今天日期.replace(/\//g,"-");
+        var 上下午  = 現在時間.substring(0,2);
+        var 時間切割 = 現在時間.substring(2,現在時間.length).split(":");
+        時間切割[0] = (上下午=="上午")? 時間切割[0]: (parseInt(時間切割[0])+12).toString();
+        
+        console.log("bbb", 時間切割[0]);
+        if (時間切割[0]=="24") {
+          時間切割[0] = "12";
+        }
+        
+        現在時間=時間切割[0]+":"+時間切割[1];
+        console.log(今天日期, 現在時間);
+        
+        if ( (couponDateArr[0]==今天日期) &&
+             (現在時間 > couponTimeStart) &&
+             (現在時間 < couponTimeEnd) ) {
+          console.log("可以簽到");
+        } else {
+          alert("未到優惠券日期及時間，不可以簽到");
+          return 1;
+        }
+
+        //檢查距離
+        if (distance > 500) {
+          alert("距離運動中心太遠，不可以簽到");
+          return 1;
+        }
+        
+        console.log("可以簽到");
+        
+        //.?API=21&UserName&couponId&UserId&PhoneNumber
+        var request = new XMLHttpRequest();
+        var paramToSend = "?API=21&"+"UserName="+userName+"&couponId="+couponId+"&UserId="+userId[1]+"&PhoneNumber="+userPhoneNumber;
+        console.log(paramToSend); 
+        if (useLocalAPIs) {
+          request.open('GET', 'http://localhost:5000' + paramToSend, true);
+        } else {
+          request.open('GET', 'https://api-linko-sports-center.herokuapp.com/'+paramToSend, true);
+        }      
+
+        request.onload = function() {
+          var responseMsg = this.response;
+
+          console.log(responseMsg);
+
+          //responseMsg="API:21 會員報名成功"; //故意測試錯誤         
+          if (responseMsg != "API:21 會員簽名成功") {
+            console.log(responseMsg);
+            alert("優惠券簽到失敗，請稍後再試，或洽櫃台人員");
+          } else {
+            $("#簽到按鈕"+idNum.toString()).text("已簽到");
+            $("#簽到按鈕"+idNum.toString()).css("background-color", "grey");                       
+            $("#簽到按鈕"+idNum.toString()).css("border-style", "none");           
+            setEnabled($("#簽到按鈕"+idNum.toString()), false);
+
+            reloadcouponNeeded = true;
+          }
+        } 
+        request.send();        
+        
+      }
+      
+      function dataAlreadyShown(){
+        console.log("data-view 已顯示", couponId, couponMember); 
+
+        // 查詢是否已核銷
+        $("#使用按鈕"+idNum.toString()).text("使用優惠券");                
+        //setEnabled($('#使用按鈕'+idNum.toString()), false);    
+        
+//        couponMember.forEach(function(coupon, index, array){
+//          if (coupon[0]==couponId) {
+//            for (var i=1; i< coupon.length;i++){
+//              console.log(coupon[i][0], coupon[i][1], coupon[i][2]);
+//              if ( (coupon[i][4]== userPhoneNumber) && (coupon[i][2]=="已確認") ) {                
+//                console.log(coupon[i][1]);
+//                $("#使用按鈕"+idNum.toString()).text("已核銷");   
+//                $("#使用按鈕"+idNum.toString()).css("background-color", "grey");  
+//                $("#使用按鈕"+idNum.toString()).css("border-style", "none");  
+//                setEnabled($('#使用按鈕'+idNum.toString()), false);  
+//              }              
+//            }
+//          }
+//        });
+        
+//        $("#與運動中心距離").text("與運動中心距離: " + distance.toString());  
+//        $("#優惠券開始時間").text("優惠券開始時間: "+couponDateArr[0]+" 從 "+couponTimeStart+" 到 "+couponTimeEnd);
+      }
+
+    </script>
+
+
+    <script>
+      //以下必須 remark 掉，不然會有問題
+      //var app = new kendo.mobile.Application(document.body, { skin: "nova" });
+    </script>
+
+  </body>
+</html>
