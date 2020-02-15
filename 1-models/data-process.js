@@ -138,8 +138,8 @@ function getCouponHistory(data) {
           if (coupon==item[0]) {
             for (var i=1; i< item.length; i++) {
               if (item[i][4] == userPhoneNumber){
-                console.log(item[i][2]);
-                couponTitle.狀態 = "已使用";
+                console.log(item[i][1]);
+                couponTitle.狀態 = item[i][1];
                                 
 //                console.log(item[i][2]);
 //                if (item[i][2]=="未確認") {
