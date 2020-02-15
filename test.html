@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Kendo UI Snippet</title>
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap" rel="stylesheet">
+
+  <link href="https://kendo.cdn.telerik.com/2020.1.114/styles/kendo.common-nova.min.css" rel="stylesheet" />
+  <link href="https://kendo.cdn.telerik.com/2020.1.114/styles/kendo.nova.min.css" rel="stylesheet" />
+  <link href="https://kendo.cdn.telerik.com/2020.1.114/styles/kendo.mobile.nova.min.css" rel="stylesheet" />   
+
+  <link href="css/couponStyle.css" rel="stylesheet" />
+     
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+  <script src="https://kendo.cdn.telerik.com/2020.1.114/js/kendo.all.min.js"></script>
+  <script src="https://kendo.cdn.telerik.com/2020.1.114/js/kendo.timezones.min.js"></script>
+  
+  <link rel="stylesheet" href="css/loading.css" />
+  <script src="js/loading.js"></script>  
+</head>
+<body>
+  
+<div data-role="view" data-init="setSelected">
+  <ul id="buttongroup" data-role="buttongroup">
+    <li>Option 1</li>
+    <li>Option 2</li>
+    <li>Option 3</li>
+  </ul>
+</div>
+
+<script>
+var app = new kendo.mobile.Application();
+var buttongroup;
+  
+function setSelected() {
+  buttongroup = $("#buttongroup").data("kendoMobileButtonGroup");
+
+  // selects by jQuery object
+  buttongroup.select(buttongroup.element.children().eq(0));
+  // selects by index
+  buttongroup.select(1);
+}
+</script>
+</body>
+</html>

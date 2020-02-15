@@ -99,6 +99,18 @@
     </header>
 
     <ul data-role="listview" data-type="group" style="margin-top: -25px" >
+      <li style="font-size:18px">
+        <ul>
+            <ul id="buttongroup" data-role="buttongroup" data-index="0" data-select="切換優惠券">
+              <li style="padding:10px" >可使用優惠券</li>
+              <li>已使用優惠券</li>
+            </ul>
+        </ul>
+      </li>
+    </ul>
+    
+<!--
+    <ul data-role="listview" data-type="group" style="margin-top: -25px" >
       <li >
         <ul>
           <li style="padding: 0px; margin-top: -10px" >
@@ -110,11 +122,14 @@
         </ul>
       </li>
     </ul>
+-->
        
     <div id="可使用優惠券Div">       
+<!--
       <div style="height: 15px"></div>
       <span class="使用優惠券title">可使用優惠券</span>
       <div style="height: 15px"></div>
+-->
 
       <ul data-role="listview" data-source="couponDataSource" data-pull-to-refresh="true" data-template="nav-template" data-header-template="header-template" class="main-menu">
 
@@ -123,8 +138,18 @@
         </script>
 
         <script type="text/x-kendo-template" id="nav-template">
-          <a href="#: url #" class="優惠券名稱">#: 優惠券名稱 # <br>
-            <span style="font-size:16px; color: gray; margin-right:20px" >優惠券使用期限: #: 優惠券時間 #</span>
+        
+        <p class="reply km-primary km-button-right"
+        style="color: white" 
+        data-role="button"
+        onclick="使用('#: 優惠券名稱 #')"  
+        id = "使用按鈕"
+        >使用</p>        
+        
+        
+          <a href="#: url #" class="優惠券名稱" style="margin-left:0px">#: 優惠券名稱 # <br>
+            <span style="font-size:16px; color: gray; margin-right:20px" >優惠券使用期限: #: 優惠券時間 #</span><br>
+            <img id="" src="#: picUrl #" alt="" width="100%" style="margin-right:20px">
           </a>
         </script>
 
@@ -132,9 +157,11 @@
     </div>
 
      <div id="已使用優惠券Div">
+<!--
       <div style="height: 15px"></div>
       <span class="使用優惠券title">已使用優惠券</span>
       <div style="height: 15px"></div>
+-->
 
       <ul data-role="listview" data-source="couponHistorySource" data-pull-to-refresh="false" data-template="nav-template" data-header-template="header-template" class="main-menu">
 
@@ -147,6 +174,7 @@
           <span style="font-size:18px; margin:0px;" class="優惠券名稱">#: 優惠券名稱 # <br>
             <span style="font-size:16px; color: gray;" >優惠券使用期限: #: 優惠券時間 #</span>           
           </span>
+          <img id="" src="#: picUrl #" alt="" width="100%" style="margin-right:20px">
         </script>
 
       </ul>
@@ -279,6 +307,8 @@
     notInCoupon=[];
     inCoupon=[];
     myHistory=[];      
+
+    var buttongroup;
     
     loadcoupons = false; //declared in data-process.js
     $("#已使用優惠券Div").hide();

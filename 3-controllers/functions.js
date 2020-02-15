@@ -416,12 +416,40 @@ function checkInputParam() {
 
 function 切換優惠券()
 {
-  console.log("切換優惠券", this.selectedIndex);
-  if(this.selectedIndex==0){
+  console.log("切換優惠券", buttongroup.selectedIndex);
+  if(buttongroup.selectedIndex==0){
     $("#可使用優惠券Div").show();
     $("#已使用優惠券Div").hide();
   } else {
     $("#可使用優惠券Div").hide();
     $("#已使用優惠券Div").show();    
   }
+}
+
+
+function 使用(要使用的優惠券) {
+  console.log("使用優惠券", 要使用優惠券);
+  
+  var selectedCouponId = 要使用的優惠券.split(":"); 
+  
+  // call API:40 =========================================================================
+  paramToSend = "?API=40&"+"UserName="+userName+"&CouponId="+selectedCouponId[0]+"&UserId="+userId[1]+"&PhoneNumber="+userPhoneNumber;
+  console.log(paramToSend);
+  var request = new XMLHttpRequest()
+  request.open('GET', 'https://api-linko-sports-center.herokuapp.com/'+paramToSend, true);
+
+  request.onload = function() {
+    //app.navigate('#:back');          
+    alert("請洽櫃台或相關人員享用優惠");           
+    setTimeout( function() {
+      //location.reload();
+      getCouponData(couponDataSource);
+      getCouponHistory(couponHistorySource);      
+      buttongroup.select(1);
+      切換優惠券();
+    }, 0);
+  }
+  // Send request
+  request.send();  
+
 }

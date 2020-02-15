@@ -26,7 +26,7 @@
         <p class="reply km-primary km-button-right"
         style="color: white" 
         data-role="button"
-        onclick="使用(#:ID#)"  
+        onclick="使用xx(#:ID#)"  
         id = "使用按鈕#:ID#"
         ></p>
 
@@ -38,7 +38,7 @@
     </script>
 
     <script>
-        //onclick="使用(#:ID#)"       
+        //onclick="使用xx(#:ID#)"       
       
       var hrefString = window.location.href;
       var inputParamString = hrefString.split("?");
@@ -83,7 +83,7 @@
         });
       }
       
-      function 使用(index) {
+      function 使用xx(index) {
         console.log("使用優惠券");
         
         // call API:40 =========================================================================
@@ -176,7 +176,7 @@
       
       function dataAlreadyShown(){
         console.log("data-view 已顯示", couponId, couponMember); 
-
+        
         // 查詢是否已核銷
         $("#使用按鈕"+idNum.toString()).text("使用優惠券");                
         //setEnabled($('#使用按鈕'+idNum.toString()), false);    

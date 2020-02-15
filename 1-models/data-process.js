@@ -23,7 +23,10 @@ couponDataSource = new kendo.data.DataSource({
   schema: {
     total: function () {
       console.log("couponDataSource scheme total");
-      取得經緯度(1);    
+      取得經緯度(1);  
+      
+      // 找來找去，這裡可以讓 buttongroup 有效
+      buttongroup = $("#buttongroup").data("kendoMobileButtonGroup");
       return 77;
     }
   },
@@ -84,6 +87,7 @@ function getCouponData(data) {
               //"老師姓名": couponData[ind][2] + " 老師",
               "優惠券時間": couponData[ind][2], 
               "url": "2-views/couponDetail.html?couponId=" + couponData[ind][0],
+              "picUrl": couponData[ind][4],              
             };
             dataTemp.push(couponTitle);
           }
@@ -123,6 +127,7 @@ function getCouponHistory(data) {
               "優惠券名稱": couponData[ind][0] + ": " + couponData[ind][1],
               "優惠券時間": couponData[ind][2], 
               "url": "2-views/couponDetail.html?couponId=" + couponData[ind][0], 
+              "picUrl": couponData[ind][4],
               "狀態": "未知",
             };
             //dataTemp.push(couponTitle);
@@ -158,8 +163,9 @@ function getCouponHistory(data) {
             //console.log(coupon, ind);
             couponTitle = {
               "優惠券名稱": couponData[ind][0] + ": " + couponData[ind][1],
-              "優惠券時間": couponData[ind][3], 
+              "優惠券時間": couponData[ind][2], 
               "url": "2-views/couponDetail.html?couponId=" + couponData[ind][0],
+              "picUrl": couponData[ind][4],              
               "狀態": "已到期",  
             };
             dataTemp.push(couponTitle);

@@ -1,14 +1,1 @@
-2020-02-04 簽到(比較使用者位置和優惠券時間)，新的 API=21 is ready in 2/5
-
-有一個小 bug，
-  PC Chrome 在 優惠券細節 頁面時，由於 URL 後帶有類似
-      #2-views/couponDetail.html?couponId=U0004
-
-  這時 reload 頁面，由於 couponMember 還沒讀入，會有以下錯誤
-      Uncaught TypeError: Cannot read property '0' of undefined
-      at init.dataAlreadyShown
-
-  還好手機的 Chrome 沒有 reload 功能。
-
-也有可能是 Kendo UI 的 bug，==> 先不修改 2020-02-10
 
